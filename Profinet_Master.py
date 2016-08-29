@@ -36,6 +36,7 @@ class Step7_Master(Client):
                 step7 = self.queue_out.get()
                 # print step7.summary()
                 self.send(step7)
+                print("Packet Sent")
             else:
                 pass
 
@@ -53,31 +54,40 @@ class Step7_Master(Client):
         super(Step7_Master, self).start()
         automation.join()
         self.socket.close()
-        self.queue_out = None
+        #self.queue_out = None
         return
 
 
 class Step7_Master_Replay(Step7_Master):
     def __init__(self, node, port, pcap=None, timeout_time=2 * 60):
         Step7_Master.__init__(self, node, port, timeout_time=timeout_time)
-        self.pcap = rdpcap(pcap)
+        if pcap is not None:
+            self.pcap = rdpcap(pcap)
         self.replay_messages = list()
 
     def filter_pcap(self):
         for p in self.pcap:
             # filter conditions
-            pass
+            if p.haslayer(TCP) and p.haslayer(Raw):
+                if p[TCP].dport == 102 and p[IP].src == "10.10.10.70":
+                    self.replay_messages.append(p)
+            #pass
 
     def replay(self):
-        print len(self.replay_messages), "Replayable Packets"
-        m = self.replay_messages[0]
-        wait_time = m.time
-        #self.queue_out.put(m[DNP3])
-        for m in self.replay_messages[1:]:
-            sleep_time = m.time - wait_time
-            time.sleep(sleep_time)
-            #self.queue_out.put(m[DNP3])
+        print len(self.replay_messages)#, "Replayable Packets"
+        if (len(self.replay_messages) > 0):
+            m = self.replay_messages[0]
             wait_time = m.time
+            raw = m.getlayer(Raw).load
+            self.queue_out.put(raw)
+            #for m in self.replay_messages[1:]:
+            for m in self.replay_messages:
+                sleep_time = m.time - wait_time
+                time.sleep(sleep_time)
+                raw = m.getlayer(Raw).load
+                self.queue_out.put(raw)
+                wait_time = m.time
+            self.replay_messages.pop(len(self.replay_messages)-1)
 
     def automation(self):
         self.filter_pcap()
