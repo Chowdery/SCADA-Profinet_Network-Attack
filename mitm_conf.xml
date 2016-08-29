@@ -1,0 +1,9 @@
+<mitm_config>
+    <time />
+    <node name="Branagram">
+        <ip_address>10.10.10.10</ip_address><mac_address>00:1B:1B:17:F8:82</mac_address><hostnames /><state>open</state>
+    </node>
+    <node name="HMI">
+        <ip_address>10.10.10.70</ip_address><mac_address>00:10:18:CB:8C:03</mac_address><hostnames /><state>open</state>
+    </node>
+</mitm_config>

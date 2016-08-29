@@ -1,0 +1,3 @@
+<mitm_config>
+    <time />
+    <node name="10.192.168.0"><ip_address>10.192.168.0</ip_address><mac_address>0A:00:27:00:00:00</mac_address><hostname /></node><node name="10.192.168.1"><ip_address>10.192.168.1</ip_address><mac_address>08:00:27:C4:EE:78</mac_address><hostname /></node><node name="10.192.168.254"><ip_address>10.192.168.254</ip_address><mac_address>08:00:27:15:08:34</mac_address><hostname /></node><node name="10.192.168.4"><ip_address>10.192.168.4</ip_address><mac_address>00:0C:C1:00:01:01</mac_address><hostname /></node></mitm_config>

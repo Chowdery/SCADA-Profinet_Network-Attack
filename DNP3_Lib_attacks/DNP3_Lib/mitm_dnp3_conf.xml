@@ -1,0 +1,2 @@
+<mitm_config>
+<node name="192.168.1.1"><dnp3_src>1</dnp3_src><dnp3_dst>10</dnp3_dst></node></mitm_config>
