@@ -36,10 +36,9 @@ class Step7_Master(Client):
                 step7 = self.queue_out.get()
                 # print step7.summary()
                 self.send(step7)
-                print("Packet Sent")
+                #print("Packet Sent")
             else:
                 pass
-
         print "- Quiting out Process..."
 
     def automation(self):
@@ -83,14 +82,14 @@ class Step7_Master_Replay(Step7_Master):
             wait_time = m.time
             raw = m.getlayer(Raw).load
             self.queue_out.put(raw)
-            #for m in self.replay_messages[1:]:
-            for m in self.replay_messages:
+            for m in self.replay_messages[1:]:
+            #for m in self.replay_messages:
                 sleep_time = m.time - wait_time
                 time.sleep(sleep_time)
                 raw = m.getlayer(Raw).load
                 self.queue_out.put(raw)
                 wait_time = m.time
-            self.replay_messages.pop(len(self.replay_messages)-1)
+            #self.replay_messages.pop(len(self.replay_messages)-1)
 
     def automation(self):
         self.filter_pcap()
@@ -100,3 +99,4 @@ class Step7_Master_Replay(Step7_Master):
         if self.running:
             self.replay()
         self.stop()
+        print "Quitting automation"
