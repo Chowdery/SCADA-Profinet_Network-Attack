@@ -1,13 +1,18 @@
 __author__ = 'Nicholas Rodofile'
+
 import Queue
 from Injection import *
+
+import snap7
+from snap7.snap7types import*
+from snap7.util import*
 
 #Parent Class
 class Client(object):
     def __init__(self, node, port, timeout_time=2*60):
         self.node = node
-        self.address = node.ip_address
-        self.port = port
+        self.address = node.ip_address      #Victim IP address
+        self.port = port                    #Victim port
         self.size = 100
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.queue_in = Queue.Queue()       #Incoming packet queue
@@ -15,6 +20,7 @@ class Client(object):
         self.error = False
         self.running = False                #Set to True when successful socket opened
         self.timeout_time = timeout_time
+        self.s7_client = snap7.client.Client()
 
     def connect(self):
         try:
@@ -50,7 +56,6 @@ class Client(object):
                 print "Client Recv: Caught exception socket.error : %s" % exc
                 self.running = False
                 self.socket.close()
-
         print "- Closing Listener..."
 
     def process_in(self):
@@ -81,6 +86,7 @@ class Client(object):
             print "Quiting program..."
             try:
                 self.socket.shutdown(socket.SHUT_WR)
+                #self.s7_client.disconnect()
             except socket.error, exc:
                 print "Client Recv: Caught exception socket.error : %s" % exc
 
@@ -93,11 +99,14 @@ class Client(object):
     def timeout(self):
         while not self.running:
             pass
-        sleep(self.timeout_time)
+        #sleep(self.timeout_time)
+        while self.running:
+            pass
         if self.running:
             print "- Time Up ..."
             self.running = False
             sleep(10)
+        print "Quitting timer"
 
     def start(self):
         processor_in = Thread(target=self.process_in)
@@ -114,8 +123,8 @@ class Client(object):
             listener.start()
             timer.start()
             timer.join(2)
-            processor_in.join()
-            processor_out.join()
+            processor_in.join(2)
+            processor_out.join(2)
             terminator.join(2)
             listener.join(2)
             return True
