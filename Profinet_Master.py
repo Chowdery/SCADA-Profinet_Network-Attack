@@ -8,7 +8,7 @@ class Step7_Master(Client):
 
     #Extract the raw (PDU) data, determine response and add to the outgoing packets
     def process_response(self, response):
-        print response
+        #print response
         # Process response using Snap 7 lib
         condition = False       #Change this based on processing code
         if condition:
@@ -76,20 +76,20 @@ class Step7_Master_Replay(Step7_Master):
             #pass
 
     def replay(self):
-        print len(self.replay_messages)#, "Replayable Packets"
-        if (len(self.replay_messages) > 0):
-            m = self.replay_messages[0]
-            wait_time = m.time
+        print len(self.replay_messages), "Replayable Packets"
+        replay_count = 0
+        wait_time = self.replay_messages[0].time
+        while self.running and replay_count < len(self.replay_messages):
+            m = self.replay_messages[replay_count]
+            sleep_time = m.time - wait_time
+            #print sleep_time
+            time.sleep(sleep_time)
             raw = m.getlayer(Raw).load
             self.queue_out.put(raw)
-            for m in self.replay_messages[1:]:
-            #for m in self.replay_messages:
-                sleep_time = m.time - wait_time
-                time.sleep(sleep_time)
-                raw = m.getlayer(Raw).load
-                self.queue_out.put(raw)
-                wait_time = m.time
-            #self.replay_messages.pop(len(self.replay_messages)-1)
+            wait_time = m.time
+            replay_count += 1
+        sleep(5)
+        print "End Replay"
 
     def automation(self):
         self.filter_pcap()

@@ -99,11 +99,14 @@ class Client(object):
     def timeout(self):
         while not self.running:
             pass
-        sleep(self.timeout_time)
+        #sleep(self.timeout_time)
+        while self.running:
+            pass
         if self.running:
             print "- Time Up ..."
             self.running = False
             sleep(10)
+        print "Quitting timer"
 
     def start(self):
         processor_in = Thread(target=self.process_in)
@@ -120,8 +123,8 @@ class Client(object):
             listener.start()
             timer.start()
             timer.join(2)
-            processor_in.join()
-            processor_out.join()
+            processor_in.join(2)
+            processor_out.join(2)
             terminator.join(2)
             listener.join(2)
             return True

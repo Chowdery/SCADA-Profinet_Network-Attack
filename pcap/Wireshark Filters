@@ -1,0 +1,3 @@
+s7comm.param.func == 0x05
+cotp.type == 0x0e
+s7comm.param.func == 0xf0
