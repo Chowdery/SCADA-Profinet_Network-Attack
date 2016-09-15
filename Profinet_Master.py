@@ -61,6 +61,8 @@ class Step7_Master(Client):
 class Step7_Master_Replay(Step7_Master):
     def __init__(self, node, port, pcap=None, timeout_time=2 * 60):
         Step7_Master.__init__(self, node, port, timeout_time=timeout_time)
+        #self.s7_client.connect("10.10.10.13",0,1)               #Connect to conveyor belt
+        #self.s7_client.connect("10.10.10.10",0,1)
         if pcap is not None:
             self.pcap = rdpcap(pcap)
         self.replay_messages = list()
@@ -69,7 +71,8 @@ class Step7_Master_Replay(Step7_Master):
         for p in self.pcap:
             # filter conditions
             if p.haslayer(TCP) and p.haslayer(Raw):
-                if p[TCP].dport == 102 and p[IP].src == "10.10.10.70":
+                if p[TCP].dport == 102 and p[IP].dst == "10.10.10.10":
+                #if p[TCP].dport == 102 and p[IP].dst == "10.10.10.13":
                     self.replay_messages.append(p)
             #pass
 
